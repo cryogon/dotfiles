@@ -53,14 +53,18 @@
   },  
   "network":{
     "format-wifi": "",
+    "format-ethernet": "󰈀",
+    "format-linked": "󰖂",
     "tooltip-format": "{essid} - {signalStrength}%",
+    "tooltip-format-linked": "{ifname}",
     "format-disconnected": "󱚼",
     "on-click": "networkmanager_dmenu"
   },
   "cpu": {
     "format": " {usage}%",
     "tooltip": true,
-    "interval": 1
+    "interval": 1,
+    "on-click": "kitty -e zsh -c 'btop; exec zsh'"
   },
   "custom/empty": {"format": " ", "tooltip": false, "interval": "once"},
   "custom/gpu": {
