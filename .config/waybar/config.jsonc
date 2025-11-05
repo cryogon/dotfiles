@@ -94,7 +94,10 @@
   },
   "hyprland/window": {
     "max-length": 32,
-    "separate-outputs": false
+    "separate-outputs": false,
+    "rewrite": {
+      "^$": "Desktop"
+    }
   },
   "mpris": {
     "format": "{player_icon} {title} - {artist}",
