@@ -1,0 +1,113 @@
+{
+  "layer": "top",
+  "height": 42,
+  "spacing": 10,
+  "reload_style_on_change": true,
+  "modules-left": ["hyprland/workspaces","hyprland/window","mpris"],
+  "modules-center": ["clock"],
+  "modules-right": [
+    "group/temps",
+    "group/husage",
+    "group/essential",
+    "tray"
+  ],
+  "group/temps": {
+    "orientation": "horizontal",
+    "modules": [
+      "temperature",
+      "custom/gpu-temp"
+    ]
+  },
+  "group/essential":{
+    "orientation": "horizontal",
+    "modules": [
+      "network",
+      "pulseaudio",
+      "custom/empty"
+    ]
+  },
+  // hardware usage
+  "group/husage": {
+    "orientation": "horizontal",
+    "modules": [
+      "cpu",
+      "custom/gpu",
+      "custom/memory"
+    ]
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-muted": "",
+    "format-source": "",
+    "format-source-muted": "",
+    "on-click": "pavucontrol",
+    "format-icons": {
+      "headphone": "󰋋",
+      "hands-free": "󱡒",
+      "headset": "󰋎",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    }
+  },  
+  "network":{
+    "format-wifi": "",
+    "tooltip-format": "{essid} - {signalStrength}%",
+    "format-disconnected": "󱚼",
+    "on-click": "networkmanager_dmenu"
+  },
+  "cpu": {
+    "format": " {usage}%",
+    "tooltip": true,
+    "interval": 1
+  },
+  "custom/empty": {"format": " ", "tooltip": false, "interval": "once"},
+  "custom/gpu": {
+    "format": "󰢮 {}%",
+    "tooltip": true,
+    "interval": 1,
+    "exec": "cat /sys/class/drm/card1/device/gpu_busy_percent"
+  },
+  "custom/gpu-temp": {
+    "format": "󰢮 {}°C",
+    "tooltip":false,
+    "interval": 1,
+    "exec": "cat /sys/class/hwmon/hwmon2/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"  
+  },
+  "custom/memory": {
+    "format": " {}%",
+    "tooltip": true,
+    "interval": 1,
+    "exec": "free | grep Mem | awk '{printf \"%.0f\", $3/$2 * 100}'"
+  },
+  "temperature": {
+    "format": " {temperatureC}°C",
+    "tooltip": true,
+    "tooltip-format": "CPU TEMP: {temperatureC}°C",
+    "interval": 1
+  },
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "activate-only": "false",
+    "all-outputs": true
+  },
+  "hyprland/window": {
+    "max-length": 32,
+    "separate-outputs": false
+  },
+  "mpris": {
+    "format": "{player_icon} {title} - {artist}",
+    "format-paused": "{status_icon} {title} - {artist}",
+    "player-icons": {
+      "default": "<span foreground='#cba6f7'>󰝚 </span>",
+      "spotify": "<span foreground='#a6e3a1'>󰓇 </span>",
+      "firefox": "<span foreground='#f38ba8'>󰗃 </span>"
+    },
+    "status-icons": {
+      "paused": "<span color='#b4befe'>\u200A\u200A󰏤\u2009\u2009</span>"
+    },
+    "min-length": 5,
+    "max-length": 18
+  }
+}

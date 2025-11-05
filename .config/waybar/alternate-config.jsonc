@@ -1,0 +1,101 @@
+{
+    "layer": "top",
+    "height": 42,
+//    "spacing": 10, // handle in css:
+    "reload_style_on_change": true,
+    "modules-left": ["hyprland/workspaces", "hyprland/window", "mpris"],
+    "modules-center": ["clock"],
+    
+    // --- THIS IS THE MAIN CHANGE ---
+    // We are no longer using 'group' modules.
+    // We are manually wrapping modules with "bookends".
+    "modules-right": [
+        "custom/l_end", "temperature", "custom/gpu-temp", "custom/r_end", // "Temps" group
+        "custom/l_end", "cpu", "custom/gpu", "memory", "custom/r_end",  // "Husage" group
+        "custom/l_end", "network", "pulseaudio", "custom/r_end",      // "Essential" group
+        "tray"
+    ],
+
+    // --- REMOVED 'group' DEFINITIONS ---
+    // We no longer need group/temps, group/essential, etc.
+
+    // --- ADD 'bookend' MODULE DEFINITIONS ---
+    "custom/l_end": { "format": " ", "interval": "once", "tooltip": false },
+    "custom/r_end": { "format": " ", "interval": "once", "tooltip": false },
+
+
+    // --- ALL YOUR OTHER MODULES (Unchanged) ---
+    "pulseaudio": {
+        "format": "{icon} ",
+        "format-muted": "",
+        "format-source": "",
+        "format-source-muted": "",
+        "on-click": "pavucontrol",
+        "format-icons": {
+            "headphone": "󰋋",
+            "hands-free": "󱡒",
+            "headset": "󰋎",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        }
+    },
+    "network":{
+        "format-wifi": "",
+        "tooltip-format": "{essid} - {signalStrength}%",
+        "format-disconnected": "󱚼",
+        "on-click": "networkmanager_dmenu"
+    },
+    "cpu": {
+        "format": " {usage}%",
+        "tooltip": true,
+        "interval": 1
+    },
+    "memory": {
+        "format": " {used}%",
+        "tooltip": true,
+        "interval": 1
+    },
+    "custom/gpu": {
+        "format": "󰢮 {}%",
+        "tooltip": true,
+        "interval": 1,
+        "exec": "cat /sys/class/drm/card1/device/gpu_busy_percent"
+    },
+    "custom/gpu-temp": {
+        "format": "󰢮 {}°C",
+        "tooltip":false,
+        "interval": 1,
+        "exec": "cat /sys/class/hwmon/hwmon2/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"
+    },
+    "temperature": {
+        "format": " {temperatureC}°C",
+        "tooltip": true,
+        "tooltip-format": "CPU TEMP: {temperatureC}°C",
+        "interval": 1
+    },
+    "hyprland/workspaces": {
+        "on-click": "activate",
+        "activate-only": "false",
+        "all-outputs": true
+    },
+    "hyprland/window": {
+        "max-length": 32,
+        "separate-outputs": false
+    },
+    "mpris": {
+        "format": "{player_icon} {title} - {artist}",
+        "format-paused": "{status_icon} {title} - {artist}",
+        "player-icons": {
+            "default": "<span foreground='#cba6f7'>󰝚 </span>",
+            "spotify": "<span foreground='#a6e3a1'>󰓇 </span>",
+            "firefox": "<span foreground='#f38ba8'>󰗃 </span>"
+        },
+        "status-icons": {
+            "paused": "<span color='#b4befe'>\u200A\u200A󰏤\u2009\u2009</span>"
+        },
+        "min-length": 5,
+        "max-length": 18
+    }
+}

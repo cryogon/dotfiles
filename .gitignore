@@ -1,0 +1,11 @@
+# Ignore Everything
+.config/*
+
+
+# Include only
+!.config/waybar
+!.config/nvim
+!.config/cava
+!.config/kitty
+
+
