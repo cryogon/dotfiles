@@ -1,0 +1,35 @@
+{
+  "css": true,
+  "buttons": [
+    {
+      "label": " Lock",
+      "action": "hyprlock",
+      "key": "l"
+    },
+    {
+      "label": " Logout",
+      "action": "hyprctl dispatch exit 0",
+      "key": "e"
+    },
+    {
+      "label": "Sleep",
+      "action": "systemctl suspend",
+      "key": "u"
+    },
+    {
+      "label": " Hibernate",
+      "action": "systemctl hibernate",
+      "key": "h"
+    },
+    {
+      "label": "Reboot",
+      "action": "systemctl reboot",
+      "key": "r"
+    },
+    {
+      "label": "Shutdown",
+      "action": "systemctl poweroff",
+      "key": "s"
+    }
+  ]
+}

@@ -1,11 +1,4 @@
-/*
- * Colors
- */
-
-@define-color bg-color #e6e0f3;  /* Light lavender for module "pills" */
-@define-color text-color #3c3e4f; /* Dark text for inside the pills */
-@define-color active-color #f5e0dc;  /* Peachy-beige for active workspace */
-
+@import "colors.css";
 
 * {
   font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;

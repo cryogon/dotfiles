@@ -1,0 +1,7 @@
+$HOME/.config/kitty/theme.conf|killall -SIGUSR1 kitty
+foreground                 #<wallbash_txt1>
+background                 #<wallbash_pry1>
+selection_foreground       #<wallbash_txt2>
+selection_background       #<wallbash_pry2>
+cursor                     #<wallbash_txt2>
+cursor_text_color          #<wallbash_txt2>

@@ -8,5 +8,6 @@
 !.config/cava
 !.config/kitty
 !.config/hypr
-
+!.config/wallbash
+!.config/wlogout
 

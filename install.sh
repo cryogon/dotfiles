@@ -38,7 +38,9 @@ pacman_packages = (
   "lm_sensors" # For CPU/GPU Temps
   "radeontop" # AMD GPU INFO like temps etc.
   "btop"
-  "nemo"
+  "nemo",
+  "hyprshot"
+  "hyprpicker"
 )
 
 aur_packages = (
