@@ -1,4 +1,4 @@
-$HOME/.config/waybar/colors.css|echo
+$HOME/.config/waybar/colors.css|true
 @define-color bg-color #<wallbash_pry1>;
 @define-color text-color #<wallbash_txt1>;
 @define-color active-color #<wallbash_pry2>;

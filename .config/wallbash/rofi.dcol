@@ -1,0 +1,13 @@
+$HOME/.config/rofi/colors.rasi|killall -SIGUSR1 rofi
+* {
+    /* Colors */
+    bg:           #<wallbash_pry1>;
+    bg-alt:       #<wallbash_pry2>;
+    fg:           #<wallbash_txt1>;
+    input-bg:     #<wallbash_pry3>;
+    input-fg:     #<wallbash_txt3>;
+    divider:      #<wallbash_pry4>;
+
+    /* Transparency */
+    transparent:  rgba(0, 0, 0, 0);
+}
