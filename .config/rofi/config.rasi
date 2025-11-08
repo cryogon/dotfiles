@@ -1,0 +1,78 @@
+@theme "colors.rasi"
+
+configuration {
+    modes: ["drun", "run"];
+
+    show-icons: true;
+
+    icon-theme: "Papirus";
+
+    drun-display-format: "{name}";
+
+    disable-history: true;
+    hide-scrollbar: true;
+
+    font: "JetBrainsMono Nerd Font 10";
+}
+
+/* Apply the theme using the imported variables */
+* {
+    background-color: @transparent;
+    text-color: @fg;
+}
+
+window {
+    background-color: @bg;
+    width: 360px;
+    height: 500px;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+mainbox {
+    children: [ "inputbar", "listview" ];
+    spacing: 12px;
+    border-color: @input-bg;
+}
+
+inputbar {
+    background-color: @input-bg;
+    color: @input-fg;
+    padding: 12px;
+    border-radius: 10px;
+    border: 0 0 1px 0;
+    border-color: @divider;
+}
+
+prompt {
+    text-color: @input-fg;
+}
+
+entry {
+    background-color: @input-bg;
+    text-color: @input-fg;
+    placeholder: "";
+}
+
+listview {
+    lines: 4;
+    layout: vertical;
+}
+
+element {
+    padding: 10px 12px;
+    border-radius: 10px;
+}
+
+element-icon {
+    size: 24px;
+    padding: 0 10px 0 0;
+}
+
+element-text {
+    vertical-align: 0.5;
+}
+
+element.selected {
+    background-color: @bg-alt;
+}
