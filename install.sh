@@ -41,6 +41,7 @@ pacman_packages = (
   "nemo",
   "hyprshot"
   "hyprpicker"
+  "parallel"
 )
 
 aur_packages = (
@@ -49,6 +50,8 @@ aur_packages = (
   "catppuccin-cursors-mocha" # Cursor Pack
   "papirus-icon-theme" # Icon Theme
   "papirus-folders-catppuccin-git" # To Further Customise Papirus Icon Theme
+  "awww" # Wallpaper selector
+  "localsend"
 )
 
 
