@@ -1,6 +1,6 @@
 # Ignore Everything
 .config/*
-
+Wallpapers/*.dcol
 
 # Include only
 !.config/waybar
