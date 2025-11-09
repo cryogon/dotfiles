@@ -1,8 +1,9 @@
 @theme "colors.rasi"
 
 configuration {
-    modes: ["drun", "run"];
-
+    modes: "drun,run";
+    display-drun: "";
+    display-run: "";
     show-icons: true;
 
     icon-theme: "Papirus";

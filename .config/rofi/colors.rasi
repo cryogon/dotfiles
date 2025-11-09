@@ -1,11 +1,11 @@
 * {
     /* Colors */
-    bg:           #1E1E2C;
-    bg-alt:       #65687E;
+    bg:           #1A1819;
+    bg-alt:       #4D4B4C;
     fg:           #FFFFFF;
-    input-bg:     #9799B3;
-    input-fg:     #0F0F0E;
-    divider:      #D7C2C7;
+    input-bg:     #797778;
+    input-fg:     #FEFEFE;
+    divider:      #A7A5A6;
 
     /* Transparency */
     transparent:  rgba(0, 0, 0, 0);
