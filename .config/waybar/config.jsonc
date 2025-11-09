@@ -35,6 +35,15 @@
       "custom/memory"
     ]
   },
+  "custom/music-animation":{
+    "exec": "~/.config/waybar/scripts/music-anim.sh",
+    "interval": 0.2,
+    "format": "{}",
+    "return-type": "json",
+    "tooltip": false,
+    "width": 32,
+    "height": 32
+  },
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "",
