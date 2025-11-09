@@ -1,4 +1,4 @@
-$HOME/.config/rofi/colors.rasi|killall -SIGUSR1 rofi
+$HOME/.config/rofi/colors.rasi|true
 * {
     /* Colors */
     bg:           #<wallbash_pry1>;
