@@ -70,32 +70,32 @@
     "on-click": "networkmanager_dmenu"
   },
   "cpu": {
-    "format": " {usage}%",
+    "format": "  {usage}%",
     "tooltip": true,
     "interval": 1,
     "on-click": "kitty -e zsh -c 'btop; exec zsh'"
   },
   "custom/empty": {"format": " ", "tooltip": false, "interval": "once"},
   "custom/gpu": {
-    "format": "󰢮 {}%",
+    "format": "󰢮  {}%",
     "tooltip": true,
     "interval": 1,
     "exec": "cat /sys/class/drm/card1/device/gpu_busy_percent"
   },
   "custom/gpu-temp": {
-    "format": "󰢮 {}°C",
+    "format": "󰢮  {}°C",
     "tooltip":false,
     "interval": 1,
     "exec": "cat /sys/class/hwmon/hwmon2/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"  
   },
   "custom/memory": {
-    "format": " {}%",
+    "format": "  {}%",
     "tooltip": true,
     "interval": 1,
     "exec": "free | grep Mem | awk '{printf \"%.0f\", $3/$2 * 100}'"
   },
   "temperature": {
-    "format": " {temperatureC}°C",
+    "format": "  {temperatureC}°C",
     "tooltip": true,
     "tooltip-format": "CPU TEMP: {temperatureC}°C",
     "interval": 1

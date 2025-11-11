@@ -85,5 +85,5 @@ window#waybar {
 #custom-memory,
 #custom-gpu-temp,
 #temperature{
-  min-width: 40px;
+  min-width: 50px;
 }

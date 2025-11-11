@@ -42,6 +42,12 @@ pacman_packages = (
   "hyprshot"
   "hyprpicker"
   "parallel"
+  "noto-fonts"
+  "ttf-dejavu"
+  "ttf-liberation"
+  "noto-fonts-cjk"
+  "noto=fonts-emoji"
+  "noto-fonts-extra"
 )
 
 aur_packages = (

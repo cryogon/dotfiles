@@ -1,0 +1,65 @@
+$HOME/.config/Vencord/themes/cryo-theme.css|true
+/**
+ * @name DCOL Key System Mapper
+ * @author YourName
+ * @version 1.0
+ * @description Applies a loaded .dcol file to Vencord/Discord's UI by mapping your key system to Discord's theme variables.
+ * @source https://github.com/your/repo
+ * @website https://your.website
+ */
+
+:root {
+  /* * === PAIR 1: Main Surfaces (Background & Text) ===
+   * Uses dcol_pry1 and dcol_txt1
+   * For App Body, Server/Channel Lists, Main Text
+   */
+  --background-primary: var(--dcol_pry1); /* Main chat background */
+  --background-secondary: var(--dcol_pry1); /* Server list, channel list */
+  --background-secondary-alt: var(--dcol_pry1); /* Alternate backgrounds */
+  
+  --header-primary: var(--dcol_txt1); /* Main titles (e.g., channel name) */
+  --text-normal: var(--dcol_txt1); /* Main chat text, paragraph text */
+  --channels-default: var(--dcol_txt1); /* Channel text color */
+
+  /* * === PAIR 2: Primary Actions (Buttons & Accent) ===
+   * Uses dcol_pry2 and dcol_txt2
+   * For Buttons, Links, Mentions, Active States
+   */
+  --brand-experiment: var(--dcol_pry2); /* Main accent color */
+  --brand-experiment-contrast: var(--dcol_txt2); /* Text on accent buttons */
+  
+  --interactive-normal: var(--dcol_pry2); /* Buttons */
+  --interactive-active: var(--dcol_pry2); /* Clicked/Active buttons */
+  --interactive-hover: var(--dcol_pry2); /* Button hover (can be customized) */
+  
+  --text-link: var(--dcol_pry2); /* Links */
+  --mention-foreground: var(--dcol_pry2); /* @mention text color */
+  --mention-background: rgba(var(--dcol_pry2_rgba), 0.1); /* @mention background */
+
+  /* * === PAIR 3: Secondary Surfaces (Cards, Inputs) ===
+   * Uses dcol_pry3 and dcol_txt3
+   * For Popups, Modals, Input Boxes, Secondary Text
+   */
+  --background-tertiary: var(--dcol_pry3); /* Popups, modals, chat input */
+  --background-floating: var(--dcol_pry3); /* Context menus, tooltips */
+  
+  --header-secondary: var(--dcol_txt3); /* Sub-headers */
+  --text-muted: var(--dcol_txt3); /* Timestamps, "typing...", help text */
+
+  /* * === PAIR 4: Muted / Tertiary Surfaces ===
+   * Uses dcol_pry4 and dcol_txt4
+   * For Borders, Dividers, Disabled States
+   */
+  --background-modifier-border: var(--dcol_pry4); /* Borders between UI sections */
+  --background-modifier-accent: var(--dcol_pry4); /* Dividers, some hover states */
+  --background-modifier-active: var(--dcol_pry4); /* Active states (e.g., voice) */
+  
+  --interactive-muted: var(--dcol_pry4); /* Disabled buttons/inputs */
+  --text-placeholder: var(--dcol_txt4); /* Placeholder text in inputs */
+
+  /* Misc. Mappings */
+  --scrollbar-auto-thumb: var(--dcol_pry3);
+  --scrollbar-auto-track: var(--dcol_pry1);
+  --scrollbar-thin-thumb: var(--dcol_pry3);
+  --scrollbar-thin-track: var(--dcol_pry1);
+}
