@@ -11,3 +11,4 @@ Wallpapers/*.dcol
 !.config/wallbash
 !.config/wlogout
 !.config/rofi
+!.config/fastfetch
