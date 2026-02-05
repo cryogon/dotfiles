@@ -12,3 +12,4 @@ Wallpapers/*.dcol
 !.config/wlogout
 !.config/rofi
 !.config/fastfetch
+!.config/quickshell
