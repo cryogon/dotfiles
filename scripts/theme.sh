@@ -11,11 +11,12 @@ ln -sf "$(readlink -f $WALLPAPER)" "$CURR_WALLPAPER_PATH"
 
 awww img --transition-type grow --transition-pos 0.456,0.234 --transition-fps 180 "$WALLPAPER"
 
-if [ ! -f "$WALLPAPER.dcol" ]; then
-  ~/dotfiles/scripts/wallbash.sh "$WALLPAPER"
-fi
-
-~/dotfiles/scripts/set-colors.sh "$WALLPAPER"
+# if [ ! -f "$WALLPAPER.dcol" ]; then
+#   ~/dotfiles/scripts/wallbash.sh "$WALLPAPER"
+# fi
+#
+# ~/dotfiles/scripts/set-colors.sh "$WALLPAPER"
+wal -l -i "$WALLPAPER"
 
 SDDM_BACKGROUND_PATH="/usr/share/sddm/themes/sddm-cryo-theme/background.png"
 
