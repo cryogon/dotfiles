@@ -83,7 +83,7 @@ ShellRoot {
 
     Process {
         id: gpuTempProc
-        command: ["bash", "-c", "cat /sys/class/hwmon/hwmon2/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"]
+        command: ["bash", "-c", "cat /sys/class/hwmon/hwmon1/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -94,7 +94,7 @@ ShellRoot {
 
     Process {
         id: cpuTempProc
-        command: ["bash", "-c", "cat /sys/class/hwmon/hwmon3/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"]
+        command: ["bash", "-c", "cat /sys/class/hwmon/hwmon2/temp1_input | awk '{printf \"%.0f\", $1 / 1000}'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -372,6 +372,10 @@ ShellRoot {
                         icon = "  "
                       } else if (vol < 60) {
                         icon = "  "
+                      }
+
+                      if (defaultSink?.audio?.muted){
+                        icon = "  "
                       }
         
                       if (defaultSink?.audio){
