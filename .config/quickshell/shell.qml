@@ -351,6 +351,7 @@ ShellRoot {
         id: wifiConnectProc
         property string targetSsid: ""
         property string targetPassword: ""
+        property bool fallbackToPassword: false
         command: targetPassword.length > 0
             ? ["nmcli", "device", "wifi", "connect", targetSsid, "password", targetPassword]
             : ["nmcli", "device", "wifi", "connect", targetSsid]
@@ -360,9 +361,21 @@ ShellRoot {
         }
         onExited: code => {
             root.wifiConnecting = false
-            root.wifiPasswordSsid = ""
+            const triedWithoutPassword = targetPassword.length === 0
+
+            if (code === 0) {
+                root.wifiPasswordSsid = ""
+                root.wifiStatusText = "Connected to " + targetSsid
+            } else if (fallbackToPassword && triedWithoutPassword) {
+                root.wifiPasswordSsid = targetSsid
+                root.wifiStatusText = "Password required for " + targetSsid
+                if (root.quickMenuVisible && root.quickMenuType === "wifi") wifiPasswordInput.forceActiveFocus()
+            } else {
+                root.wifiStatusText = "Failed to connect to " + targetSsid
+            }
+
+            fallbackToPassword = false
             targetPassword = ""
-            root.wifiStatusText = code === 0 ? ("Connected to " + targetSsid) : ("Failed to connect to " + targetSsid)
             root.refreshWifi(true)
         }
     }
@@ -536,56 +549,6 @@ ShellRoot {
             cpuUsageProc.running = true
             gpuUsageProc.running = true
             ramUsageProc.running = true
-        }
-    }
-
-    Variants {
-        model: Quickshell.screens
-        delegate: PanelWindow {
-            id: quickMenuBackdrop
-            property var modelData: modelData
-            readonly property bool activeBackdrop: root.quickMenuVisible && root.quickMenuScreen === quickMenuBackdrop.screen
-            visible: activeBackdrop
-
-            screen: modelData
-            exclusionMode: ExclusionMode.Ignore
-            color: "transparent"
-
-            anchors {
-                top: true
-                bottom: true
-                left: true
-                right: true
-            }
-
-            margins {
-                top: 0
-                bottom: 0
-                left: 0
-                right: 0
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-                onPressed: mouse => {
-                    const trayX = parent.width - root.quickMenuRightMargin - root.quickMenuWidth
-                    const trayY = 49
-                    const trayH = root.quickMenuType === "wifi" ? 390 : 430
-                    const insideTray = mouse.x >= trayX
-                        && mouse.x <= trayX + root.quickMenuWidth
-                        && mouse.y >= trayY
-                        && mouse.y <= trayY + trayH
-
-                    if (insideTray) {
-                        mouse.accepted = false
-                        return
-                    }
-
-                    mouse.accepted = true
-                    root.closeQuickMenu()
-                }
-            }
         }
     }
 
@@ -1087,33 +1050,28 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore
             anchors {
                 top: true
+                bottom: true
+                left: true
                 right: true
             }
 
             margins {
-                top: activeForScreen ? 49 : 36
-                right: root.quickMenuRightMargin
+                top: 0
+                bottom: 0
+                left: 0
+                right: 0
             }
-
-            implicitWidth: root.quickMenuWidth
-            implicitHeight: root.quickMenuType === "wifi" ? 390 : 430
             color: "transparent"
-
-            Behavior on margins.top {
-                NumberAnimation {
-                    duration: 240
-                    easing.type: Easing.OutCubic
-                }
-            }
 
             Item {
                 anchors.fill: parent
                 focus: quickMenuWindow.activeForScreen
-                opacity: quickMenuWindow.activeForScreen ? 1 : 0
 
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 180
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                    onPressed: {
+                        root.closeQuickMenu()
                     }
                 }
 
@@ -1124,8 +1082,29 @@ ShellRoot {
                     }
                 }
 
+                Item {
+                    id: trayHost
+                    x: parent.width - root.quickMenuRightMargin - root.quickMenuWidth
+                    y: quickMenuWindow.activeForScreen ? 49 : 36
+                    width: root.quickMenuWidth
+                    height: root.quickMenuType === "wifi" ? 390 : 430
+                    opacity: quickMenuWindow.activeForScreen ? 1 : 0
+
+                    Behavior on y {
+                        NumberAnimation {
+                            duration: 240
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 180
+                        }
+                    }
+
                 Rectangle {
-                    anchors.fill: parent
+                    anchors.fill: trayHost
                     radius: 15
                     color: Qt.rgba(theme.bgColor.r, theme.bgColor.g, theme.bgColor.b, 0.95)
                     border.width: 1
@@ -1388,12 +1367,15 @@ ShellRoot {
                                                     return
                                                 }
                                                 if (modelData.secure) {
-                                                    root.wifiPasswordSsid = modelData.ssid
-                                                    root.wifiStatusText = "Password required for " + modelData.ssid
-                                                    wifiPasswordInput.forceActiveFocus()
+                                                    root.wifiPasswordSsid = ""
+                                                    wifiConnectProc.targetSsid = modelData.ssid
+                                                    wifiConnectProc.targetPassword = ""
+                                                    wifiConnectProc.fallbackToPassword = true
+                                                    wifiConnectProc.running = true
                                                 } else {
                                                     wifiConnectProc.targetSsid = modelData.ssid
                                                     wifiConnectProc.targetPassword = ""
+                                                    wifiConnectProc.fallbackToPassword = false
                                                     wifiConnectProc.running = true
                                                 }
                                             }
@@ -1664,6 +1646,7 @@ ShellRoot {
                             }
                         }
                     }
+                }
                 }
             }
         }
