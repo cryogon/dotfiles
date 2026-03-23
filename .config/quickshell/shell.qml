@@ -14,6 +14,8 @@ import "modules/controllers"
 ShellRoot {
     id: root
 
+    property var themeObj: theme
+
     property string time
     property string gpuTemp
     property string cpuTemp
@@ -277,6 +279,7 @@ ShellRoot {
         delegate: PanelWindow {
             id: bar
             property var modelData: modelData
+            property var themeObj: theme
             screen: modelData
 
             anchors {
@@ -296,6 +299,7 @@ ShellRoot {
             // LEFT SECTION
             Row {
                 id: leftModules
+                property var themeObj: theme
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 12
@@ -322,7 +326,9 @@ ShellRoot {
                                 CryoText {
                                     anchors.centerIn: parent
                                     text: modelData.name
-                                    color: modelData.focused ? theme.fgColor : theme.fgColor
+                                    color: modelData.focused
+                                        ? theme.fgColor
+                                        : Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.72)
                                 }
                             }
                         }
@@ -394,6 +400,7 @@ ShellRoot {
             // CENTER SECTION
             Rectangle {
                 id: centerModule
+                property var themeObj: theme
                 anchors.centerIn: parent
                 implicitHeight: 35
                 implicitWidth: dateText.implicitWidth + 25
@@ -410,6 +417,7 @@ ShellRoot {
             // RIGHT SECTION
             Row {
                 id: rightModules
+                property var themeObj: theme
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 12
@@ -764,6 +772,7 @@ ShellRoot {
             id: quickMenuWindow
             property var modelData: modelData
             property bool activeForScreen: root.quickMenuVisible && root.quickMenuScreen === quickMenuWindow.screen
+            property var themeObj: theme
             visible: activeForScreen
 
             screen: modelData
@@ -785,6 +794,7 @@ ShellRoot {
 
             Item {
                 anchors.fill: parent
+                property var themeObj: theme
                 focus: quickMenuWindow.activeForScreen
 
                 MouseArea {
@@ -883,7 +893,7 @@ ShellRoot {
                                 Layout.fillWidth: true
                                 CryoText {
                                     text: root.wifiEnabled ? "Wi-Fi on" : "Wi-Fi off"
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.82)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
                                 Item { Layout.fillWidth: true }
 
@@ -1042,7 +1052,7 @@ ShellRoot {
 
                                             CryoText {
                                                 text: modelData.signal > 66 ? "󰤨" : modelData.signal > 33 ? "󰤥" : "󰤟"
-                                                color: modelData.connected ? theme.accentColor : theme.fgColor
+                                                color: theme.fgColor
                                             }
 
                                             ColumnLayout {
@@ -1051,14 +1061,14 @@ ShellRoot {
                                                 CryoText {
                                                     text: modelData.ssid
                                                     font.pixelSize: 12
-                                                    color: modelData.connected ? theme.accentColor : theme.fgColor
+                                                    color: theme.fgColor
                                                     elide: Text.ElideRight
                                                     Layout.fillWidth: true
                                                 }
                                                 CryoText {
                                                     text: (modelData.secure ? "󰌾 " + modelData.security : "Open") + " · " + modelData.signal + "%"
                                                     font.pixelSize: 10
-                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.65)
+                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
                                                 }
                                             }
 
@@ -1066,7 +1076,7 @@ ShellRoot {
                                                 visible: modelData.connected
                                                 text: "Connected"
                                                 font.pixelSize: 10
-                                                color: theme.accentColor
+                                                color: theme.fgColor
                                             }
                                         }
 
@@ -1115,7 +1125,7 @@ ShellRoot {
                                     visible: root.wifiNetworks.length === 0 && !root.wifiRefreshing
                                     text: root.wifiEnabled ? "No networks found" : "Wi-Fi is off"
                                     font.pixelSize: 12
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.65)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
 
                                 CryoText {
@@ -1123,7 +1133,7 @@ ShellRoot {
                                     visible: root.wifiRefreshing
                                     text: "Scanning..."
                                     font.pixelSize: 12
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.65)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
                             }
                         }
@@ -1138,7 +1148,7 @@ ShellRoot {
                                 Layout.fillWidth: true
                                 CryoText {
                                     text: root.btEnabled ? "Bluetooth on" : "Bluetooth off"
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.82)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
                                 Item { Layout.fillWidth: true }
 
@@ -1204,13 +1214,13 @@ ShellRoot {
                                 visible: root.btStatusText.length > 0
                                 text: root.btStatusText
                                 font.pixelSize: 11
-                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.7)
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                             }
 
                             CryoText {
                                 text: "Paired Devices"
                                 font.pixelSize: 11
-                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.7)
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                             }
 
                             Rectangle {
@@ -1261,14 +1271,14 @@ ShellRoot {
                                                     visible: modelData.battery >= 0
                                                     text: "Battery " + modelData.battery + "%"
                                                     font.pixelSize: 10
-                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.68)
+                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
                                                 }
                                             }
 
                                             CryoText {
                                                 text: modelData.connected ? "Disconnect" : "Connect"
                                                 font.pixelSize: 10
-                                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.68)
+                                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
                                             }
                                         }
 
@@ -1297,14 +1307,14 @@ ShellRoot {
                                     visible: root.btPairedDevices.length === 0 && !root.btRefreshing
                                     text: "No paired devices"
                                     font.pixelSize: 11
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.65)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
                             }
 
                             CryoText {
                                 text: "Available Devices"
                                 font.pixelSize: 11
-                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.7)
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                             }
 
                             Rectangle {
@@ -1355,14 +1365,14 @@ ShellRoot {
                                                     visible: modelData.battery >= 0
                                                     text: "Battery " + modelData.battery + "%"
                                                     font.pixelSize: 10
-                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.68)
+                                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
                                                 }
                                             }
 
                                             CryoText {
                                                 text: "Pair"
                                                 font.pixelSize: 10
-                                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.68)
+                                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
                                             }
                                         }
 
@@ -1391,7 +1401,7 @@ ShellRoot {
                                     visible: root.btAvailableDevices.length === 0 && !root.btRefreshing
                                     text: root.btEnabled ? "No discoverable devices" : "Bluetooth is off"
                                     font.pixelSize: 11
-                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.65)
+                                    color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.9)
                                 }
                             }
                         }

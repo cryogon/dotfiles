@@ -20,9 +20,10 @@ wal -l -i "$WALLPAPER"
 
 SDDM_BACKGROUND_PATH="/usr/share/sddm/themes/sddm-cryo-theme/background.png"
 
+# touch "/tmp/sddm_blur"
 # Use ImageMagick to create a blurred version
-magick "$NEW_WALLPAPER" -blur 0x8 "/tmp/sddm_blur.png"
+# magick "$NEW_WALLPAPER" -blur 0x8 "/tmp/sddm_blur.png"
 
-cp "/tmp/sddm_blur.png" "$SDDM_BACKGROUND_PATH"
+# cp "/tmp/sddm_blur.png" "$SDDM_BACKGROUND_PATH"
 
 echo "SDDM background updated!"
