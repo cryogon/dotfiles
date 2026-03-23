@@ -29,6 +29,17 @@ ShellRoot {
     property real quickMenuRightMargin: 10
     property int quickMenuWidth: 340
 
+    // Wallpaper picker
+    property bool wallpaperPickerVisible: false
+    property var wallpaperPickerScreen: null
+    property bool wallpaperLoading: false
+    property bool wallpaperApplying: false
+    property string wallpaperStatusText: ""
+    property string wallpapersDir: Quickshell.env("QS_WALLPAPER_DIR") || (Quickshell.env("HOME") + "/dotfiles/Wallpapers")
+    property string wallpaperThumbDir: Quickshell.env("QS_WALLPAPER_THUMBS") || (Quickshell.env("HOME") + "/.cache/wall-thumbnails")
+    property string wallpaperThemeScript: Quickshell.env("QS_WALLPAPER_SETTER") || (Quickshell.env("HOME") + "/dotfiles/scripts/theme.sh")
+    property string wallpaperThumbScript: Quickshell.env("QS_WALLPAPER_THUMB_GEN") || (Quickshell.env("HOME") + "/dotfiles/scripts/create-thumbnails.sh")
+
     property alias wifiEnabled: wifiController.wifiEnabled
     property alias wifiCurrentSsid: wifiController.wifiCurrentSsid
     property alias wifiIfname: wifiController.wifiIfname
@@ -165,6 +176,34 @@ ShellRoot {
     function refreshBluetooth() {
         bluetoothController.refreshBluetooth()
     }
+
+    function openWallpaperPicker(screenRef) {
+        root.closeQuickMenu()
+        root.wallpaperPickerScreen = screenRef || null
+        root.wallpaperPickerVisible = true
+        root.wallpaperStatusText = ""
+
+        if (!wallpaperThumbGenProc.running) wallpaperThumbGenProc.running = true
+        root.refreshWallpaperList()
+    }
+
+    function closeWallpaperPicker() {
+        root.wallpaperPickerVisible = false
+        root.wallpaperPickerScreen = null
+        root.wallpaperStatusText = ""
+    }
+
+    function toggleWallpaperPicker(screenRef) {
+        if (root.wallpaperPickerVisible) root.closeWallpaperPicker()
+        else root.openWallpaperPicker(screenRef)
+    }
+
+    function refreshWallpaperList() {
+        if (wallpaperListProc.running) return
+        wallpaperModel.clear()
+        root.wallpaperLoading = true
+        wallpaperListProc.running = true
+    }
        
     Process {
         id: dateProc
@@ -238,6 +277,70 @@ ShellRoot {
     Process {
         id: networkManagerDmenuProcess
         command: ["networkmanager_dmenu"]
+    }
+
+    Process {
+        id: wallpaperThumbGenProc
+        command: ["bash", "-lc", "\"$0\"", root.wallpaperThumbScript]
+        onExited: {
+            if (root.wallpaperPickerVisible) root.refreshWallpaperList()
+        }
+    }
+
+    ListModel {
+        id: wallpaperModel
+    }
+
+    Process {
+        id: wallpaperListProc
+        command: ["bash", "-lc", "wd=\"$0\"; td=\"$1\"; [ -d \"$wd\" ] || exit 0; for f in \"$wd\"/*.{jpg,jpeg,png,webp}; do [ -f \"$f\" ] || continue; b=$(basename \"$f\"); printf '%s\\t%s\\t%s\\n' \"$f\" \"$b\" \"$td/$b\"; done", root.wallpapersDir, root.wallpaperThumbDir]
+        stdout: SplitParser {
+            onRead: data => {
+                const line = data.trim()
+                if (line.length === 0) return
+                const parts = line.split("\t")
+                if (parts.length < 3) return
+                wallpaperModel.append({
+                    fullPath: parts[0],
+                    name: parts[1],
+                    thumbPath: parts[2]
+                })
+            }
+        }
+        onExited: {
+            root.wallpaperLoading = false
+            if (wallpaperModel.count === 0) root.wallpaperStatusText = "No wallpapers found in " + root.wallpapersDir
+        }
+    }
+
+    Process {
+        id: wallpaperApplyProc
+        property string targetPath: ""
+        command: ["bash", "-lc", "\"$0\" \"$1\"", root.wallpaperThemeScript, targetPath]
+        onStarted: {
+            root.wallpaperApplying = true
+            root.wallpaperStatusText = "Applying " + targetPath.split("/").pop() + "..."
+        }
+        onExited: code => {
+            root.wallpaperApplying = false
+            root.wallpaperStatusText = code === 0 ? "Wallpaper updated" : "Failed to set wallpaper"
+        }
+    }
+
+    IpcHandler {
+        target: "wallpaper"
+
+        function toggle() {
+            root.toggleWallpaperPicker(null)
+        }
+
+        function open() {
+            root.openWallpaperPicker(null)
+        }
+
+        function close() {
+            root.closeWallpaperPicker()
+        }
     }
 
     Timer {
@@ -1407,6 +1510,250 @@ ShellRoot {
                         }
                     }
                 }
+                }
+            }
+        }
+    }
+
+    Variants {
+        model: Quickshell.screens
+        delegate: PanelWindow {
+            id: wallpaperPickerWindow
+            property var modelData: modelData
+            property bool activeForScreen: root.wallpaperPickerVisible && (root.wallpaperPickerScreen === null || root.wallpaperPickerScreen === wallpaperPickerWindow.screen)
+            property var themeObj: theme
+            visible: activeForScreen
+            onActiveForScreenChanged: {
+                if (activeForScreen) pickerRoot.forceActiveFocus()
+            }
+
+            screen: modelData
+            exclusionMode: ExclusionMode.Ignore
+            color: "transparent"
+
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
+
+            margins {
+                top: 0
+                bottom: 0
+                left: 0
+                right: 0
+            }
+
+            Item {
+                id: pickerRoot
+                anchors.fill: parent
+                property var themeObj: theme
+                focus: wallpaperPickerWindow.activeForScreen
+
+                Keys.onPressed: event => {
+                    if (event.key === Qt.Key_Escape) {
+                        root.closeWallpaperPicker()
+                        event.accepted = true
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: {
+                        root.closeWallpaperPicker()
+                    }
+                }
+
+                Rectangle {
+                    id: pickerCard
+                    anchors.centerIn: parent
+                    width: Math.min(parent.width * 0.86, 1220)
+                    height: Math.min(parent.height * 0.82, 760)
+                    radius: 18
+                    color: Qt.rgba(theme.bgColor.r, theme.bgColor.g, theme.bgColor.b, 0.96)
+                    border.width: 1
+                    border.color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.12)
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: mouse => {
+                            mouse.accepted = true
+                        }
+                    }
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 14
+                        spacing: 10
+
+                        RowLayout {
+                            Layout.fillWidth: true
+
+                            CryoText {
+                                text: "󰉋  Wallpapers"
+                                color: theme.fgColor
+                            }
+
+                            CryoText {
+                                text: root.wallpapersDir
+                                font.pixelSize: 10
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.82)
+                                elide: Text.ElideMiddle
+                                Layout.fillWidth: true
+                            }
+
+                            Rectangle {
+                                width: 26
+                                height: 26
+                                radius: 8
+                                color: refreshWallMouse.containsMouse
+                                    ? Qt.rgba(theme.accentColor.r, theme.accentColor.g, theme.accentColor.b, 0.24)
+                                    : "transparent"
+
+                                CryoText {
+                                    anchors.centerIn: parent
+                                    text: root.wallpaperLoading ? "󰑐" : "󰑓"
+                                }
+
+                                MouseArea {
+                                    id: refreshWallMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: {
+                                        if (!root.wallpaperLoading) {
+                                            if (!wallpaperThumbGenProc.running) wallpaperThumbGenProc.running = true
+                                            root.refreshWallpaperList()
+                                        }
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                width: 26
+                                height: 26
+                                radius: 8
+                                color: closeWallMouse.containsMouse
+                                    ? Qt.rgba(theme.accentColor.r, theme.accentColor.g, theme.accentColor.b, 0.24)
+                                    : "transparent"
+
+                                CryoText {
+                                    anchors.centerIn: parent
+                                    text: "󰅖"
+                                }
+
+                                MouseArea {
+                                    id: closeWallMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: root.closeWallpaperPicker()
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 1
+                            color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.10)
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 12
+                            color: Qt.rgba(theme.bgColor.r, theme.bgColor.g, theme.bgColor.b, 0.72)
+                            clip: true
+
+                            GridView {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                model: wallpaperModel
+                                cellWidth: 210
+                                cellHeight: 150
+                                boundsBehavior: Flickable.StopAtBounds
+
+                                delegate: Rectangle {
+                                    width: 196
+                                    height: 138
+                                    radius: 12
+                                    color: wallItemMouse.containsMouse
+                                        ? Qt.rgba(theme.accentColor.r, theme.accentColor.g, theme.accentColor.b, 0.22)
+                                        : Qt.rgba(theme.bgColor.r, theme.bgColor.g, theme.bgColor.b, 0.65)
+                                    border.width: 1
+                                    border.color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.10)
+
+                                    Column {
+                                        anchors.fill: parent
+                                        anchors.margins: 6
+                                        spacing: 5
+
+                                        Rectangle {
+                                            width: parent.width
+                                            height: 98
+                                            radius: 9
+                                            clip: true
+                                            color: Qt.rgba(theme.bgColor.r, theme.bgColor.g, theme.bgColor.b, 0.85)
+
+                                            Image {
+                                                anchors.fill: parent
+                                                source: "file://" + thumbPath
+                                                fillMode: Image.PreserveAspectCrop
+                                                smooth: true
+                                                cache: false
+                                                asynchronous: true
+                                            }
+                                        }
+
+                                        CryoText {
+                                            width: parent.width
+                                            text: name
+                                            font.pixelSize: 11
+                                            elide: Text.ElideRight
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        id: wallItemMouse
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onClicked: {
+                                            if (root.wallpaperApplying) return
+                                            wallpaperApplyProc.targetPath = fullPath
+                                            wallpaperApplyProc.running = true
+                                            root.closeWallpaperPicker()
+                                        }
+                                    }
+                                }
+
+                                ScrollBar.vertical: ScrollBar {
+                                    active: true
+                                    width: 6
+                                }
+                            }
+
+                            CryoText {
+                                anchors.centerIn: parent
+                                visible: root.wallpaperLoading
+                                text: "Loading wallpapers..."
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
+                            }
+
+                            CryoText {
+                                anchors.centerIn: parent
+                                visible: !root.wallpaperLoading && wallpaperModel.count === 0
+                                text: root.wallpaperStatusText.length > 0 ? root.wallpaperStatusText : "No wallpapers found"
+                                color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
+                            }
+                        }
+
+                        CryoText {
+                            Layout.fillWidth: true
+                            visible: root.wallpaperStatusText.length > 0 && !root.wallpaperLoading
+                            text: root.wallpaperStatusText
+                            font.pixelSize: 11
+                            color: Qt.rgba(theme.fgColor.r, theme.fgColor.g, theme.fgColor.b, 0.88)
+                        }
+                    }
                 }
             }
         }
