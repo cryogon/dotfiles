@@ -1,2 +1,0 @@
- Session   Mapping entire quickshell configuration
-  Continue  opencode -s ses_2f57af430ffeEgoXLoPLGSKZhL
